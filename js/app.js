@@ -1,8 +1,11 @@
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
+    this.x = x;
+    this.y = y;
+    resetX = x;
+    this.speed = Math.floor((Math.random() * 100) + 1) + 65;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -14,10 +17,22 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    //Sets the speed or 'movement' of the
+    this.x += this.speed*dt;
+    //Checks each enemy in the array and if they are at the end of the
+    //Game board they are reset to the start and their speed is reset.
+    allEnemies.forEach(function(enemy) {
+      if(enemy.x >= 510) {
+        enemy.x = resetX;
+        this.speed = Math.floor((Math.random() * 100) + 1) + 65;
+      }else {
+
+      }
+    });
 };
 
 // Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
+Enemy.prototype.render = function(x, y) {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
@@ -81,13 +96,17 @@ class Player {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 const player = new Player(200, 400);
-const enemyOne = new Enemy();
-const enemyTwo = new Enemy();
-const enemyThree = new Enemy();
-const enemyFour = new Enemy();
-const allEnemies = [enemyOne, enemyTwo, enemyThree, enemyFour];
-
-
+const enemyOne = new Enemy(-100, 60);
+const enemyTwo = new Enemy(-100, 140);
+const enemyThree = new Enemy(-100, 220);
+const enemyFour = new Enemy(-200, 60);
+const enemyFive = new Enemy(-200, 140);
+const enemySix = new Enemy(-200, 220);
+const enemySeven = new Enemy(-350, 60);
+const enemyEight = new Enemy(-350, 140);
+const enemyNine = new Enemy(-350, 220);
+const allEnemies = [enemyOne, enemyTwo, enemyThree, enemyFour, enemyFive, enemySix, enemySeven,
+   enemyEight, enemyNine];
 
 
 // This listens for key presses and sends the keys to your
