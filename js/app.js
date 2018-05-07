@@ -24,26 +24,54 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-class player {
-  update() {
+class Player {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.sprite = 'images/char-boy.png';
+  }
+  update(dt) {
 
   }
 
   render() {
-
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   }
 
-  handleInput() {
-
+  handleInput(key) {
+    switch (key) {
+      case 'left':
+        console.log('left move');
+        player.x -= 100;
+        break;
+      case 'right':
+        console.log('right move');
+        player.x += 100;
+        break;
+      case 'up':
+        console.log('up move');
+        player.y -= 100;
+        break;
+      case 'down':
+        player.y += 100;
+        console.log('down move');
+        break;
+    }
   }
 }
 
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
-let allEnemies = [];
 // Place the player object in a variable called player
-let playerContainer = player;
+const player = new Player(200, 400);
+const enemyOne = new Enemy();
+const enemyTwo = new Enemy();
+const enemyThree = new Enemy();
+const enemyFour = new Enemy();
+const allEnemies = [enemyOne, enemyTwo, enemyThree, enemyFour];
+player.render();
+
 
 
 
@@ -56,6 +84,5 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
