@@ -41,20 +41,36 @@ class Player {
   handleInput(key) {
     switch (key) {
       case 'left':
-        console.log('left move');
-        player.x -= 100;
+        if(player.x === 0) {
+          console.log('cant move');
+        }else {
+          console.log('left move');
+          player.x -= 100;
+        }
         break;
       case 'right':
-        console.log('right move');
-        player.x += 100;
+        if(player.x === 400) {
+          console.log('cant move');
+        }else {
+          console.log('right move');
+          player.x += 100;
+        }
         break;
       case 'up':
-        console.log('up move');
-        player.y -= 100;
+        if(player.y === -50) {
+          console.log('cant move');
+        }else {
+          console.log('up move');
+          player.y -= 90;
+        }
         break;
       case 'down':
-        player.y += 100;
-        console.log('down move');
+        if(player.y >= 400) {
+          console.log('cant move');
+        }else {
+          console.log('up move');
+          player.y += 90;
+        }
         break;
     }
   }
@@ -70,7 +86,6 @@ const enemyTwo = new Enemy();
 const enemyThree = new Enemy();
 const enemyFour = new Enemy();
 const allEnemies = [enemyOne, enemyTwo, enemyThree, enemyFour];
-player.render();
 
 
 
