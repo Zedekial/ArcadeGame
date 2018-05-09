@@ -90,13 +90,14 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
+      allGems.forEach(function(gem) {
+        gem.update();
+      });
+      allEnemies.forEach(function(enemy) {
             enemy.update(dt);
-        });
-        allGems.forEach(function(gem) {
-          gem.update();
-        });
-        player.update();
+      });
+      player.update();
+      reset();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -152,14 +153,12 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+         allGems.forEach(function(gem) {
+           gem.render();
+         });
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
-        allGems.forEach(function(gem) {
-          gem.render();
-        });
-
         player.render();
     }
 
@@ -168,7 +167,6 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -183,7 +181,10 @@ var Engine = (function(global) {
         'images/char-boy.png',
         'images/gem-green.png',
         'images/gem-blue.png',
-        'images/gem-orange.png'
+        'images/gem-orange.png',
+        'images/half-gem-blue.png',
+        'images/half-gem-green.png',
+        'images/half-gem-orange.png'
     ]);
     Resources.onReady(init);
 

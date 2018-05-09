@@ -1,10 +1,10 @@
 // Enemies our player must avoid
-var Enemy = function(x, y) {
+var Enemy = function(x, y, reset) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     this.x = x;
     this.y = y;
-    resetX = x;
+    resetX = reset;
     this.height = 70;
     this.width = 100;
     this.speed = Math.floor((Math.random() * 100) + 1) + 65;
@@ -60,9 +60,10 @@ class Player {
     this.height = 80;
     this.width = 70;
     this.sprite = 'images/char-boy.png';
+    this.score = 0;
   }
   update(dt) {
-    if (player.y <= 50) {
+    if (won === false && player.y <= 50/player.height) {
       playerInstances.playerWon();
     }
   }
@@ -75,33 +76,25 @@ class Player {
     switch (key) {
       case 'left':
         if (player.x === 0) {
-          console.log('cant move');
         }else {
-          console.log('left move');
           player.x -= 100;
         }
         break;
       case 'right':
         if (player.x === 400) {
-          console.log('cant move');
         }else {
-          console.log('right move');
           player.x += 100;
         }
         break;
       case 'up':
         if (player.y === -50) {
-          console.log('cant move');
         }else {
-          console.log('up move');
           player.y -= 90;
         }
         break;
       case 'down':
         if (player.y >= 400) {
-          console.log('cant move');
         }else {
-          console.log('up move');
           player.y += 90;
         }
         break;
@@ -111,23 +104,30 @@ class Player {
 
 //Gems for extra score
 class Gem {
-  constructor(color, score, x, y) {
+  constructor(color, score, x, y, id) {
     this.x = x;
     this.y = y;
     this.color = color;
     this.score = score;
-    this.height = 95;
-    this.width = 90;
-    this.sprite = 'images/gem-' + this.color +'.png';
+    this.id = id;
+    this.height = 60;
+    this.width = 70;
+    this.sprite = 'images/half-gem-' + this.color +'.png';
   }
 
   update() {
     allGems.forEach(function(gem) {
-      if (player.x < gem.x + gem.width &&
+      if (player.x < gem.x + 10 &&
         player.x + player.width > gem.x &&
-        player.y < gem.y + gem.height &&
+        player.y < gem.y + 10 &&
         player.height + player.y > gem.y) {
           console.log('bling!')
+          gemToKill = gem.id;
+          let gemName = gem.id;
+          let gemIndex = allGems.indexOf(gem);
+          if(gemToKill == gemName) {
+            allGems.splice(gemIndex, 1);
+          }
           playerInstances.gemCollected(gem.score);
         }
     });
@@ -141,20 +141,25 @@ class Gem {
 //Instances for player such as death (collision) and winning (crossing the path)
 var playerInstances = {
   playerDied: function() {
-    console.log('whoops you DIED')
     player.x = 200;
     player.y = 400;
   },
 
   playerWon: function() {
-    console.log('you win!')
-    setTimeout (function(){
+    won = true;
+    setTimeout(function(){
+      if(won === true) {
+        won = false;
+        alert('You won!, you scored ' + player.score + ' points!');
+      }
+    }, 350)
+    setTimeout(function(){
       player.x = 200;
       player.y = 400;
-    },1000)
+    }, 200)
   },
   gemCollected: function(score) {
-    console.log('gem collected! ' + score + ' points')
+    player.score += score;
   }
 };
 
@@ -162,22 +167,26 @@ var playerInstances = {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 const player = new Player(200, 400);
-const enemyOne = new Enemy(-100, 60);
-const enemyTwo = new Enemy(-100, 140);
-const enemyThree = new Enemy(-100, 220);
-const enemyFour = new Enemy(-200, 60);
-const enemyFive = new Enemy(-200, 140);
-const enemySix = new Enemy(-200, 220);
-const enemySeven = new Enemy(-350, 60);
-const enemyEight = new Enemy(-350, 140);
-const enemyNine = new Enemy(-350, 220);
+const enemyOne = new Enemy(100, 60, -100);
+const enemyTwo = new Enemy(100, 140, -100);
+const enemyThree = new Enemy(100, 220, -200);
+const enemyFour = new Enemy(-100, 60, -200);
+const enemyFive = new Enemy(-100, 140, -200);
+const enemySix = new Enemy(-100, 220, -100);
+const enemySeven = new Enemy(-200, 60, -150);
+const enemyEight = new Enemy(-200, 140, -150);
+const enemyNine = new Enemy(-200, 220, -250);
 const allEnemies = [enemyOne, enemyTwo, enemyThree, enemyFour, enemyFive, enemySix, enemySeven,
    enemyEight, enemyNine];
 
-const gemOne = new Gem('blue', 400, 302, 400);
-const gemTwo = new Gem('green', 200, 2, 400);
-const gemThree = new Gem('orange', 100, 102, 400);
+const gemOne = new Gem('blue', 400, 317, 80, 'blueOne');
+const gemTwo = new Gem('green', 200, 17, 160, 'greenOne');
+const gemThree = new Gem('orange', 100, 117, 240, 'orangeOne');
 const allGems = [gemOne, gemTwo, gemThree];
+
+let gemToKill = '';
+let won = false;
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
