@@ -1,9 +1,9 @@
 # Classic Arcade Game - Udacity FEND Project
 
 ```
-A classic arcade game clone similar to frogger. The player must get from the start position to the end avoiding all enemy
-bugs. If the player hits the bugs the game is over and you must start again. If you reach the end you will be told your 
-final score.
+A classic arcade game clone similar to frogger. The player must get from the start position to the end 
+avoiding all enemy bugs. If the player hits the bugs the game is over and you must start again. 
+If you reach the end you will be told your final score.
 ```
 
 ![Character](images/char-boy.png)
