@@ -1,12 +1,17 @@
 // Enemies our player must avoid
+// When a new enemy is created it is passed an x, y and reset number
+
 var Enemy = function(x, y, reset) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+    // Declares variables which are used within the enemy object
     this.x = x;
     this.y = y;
-    resetX = reset;
+    this.resetX = reset;
+    this.startPos = x;
+    // Height and width are declared for use later in collision calculations
     this.height = 70;
-    this.width = 100;
+    this.width = 90;
+    // Speed is set using the Math.random to create a number between 1 and 100
+    // To stop the speed from rolling too low any final result has 65 added to it
     this.speed = Math.floor((Math.random() * 100) + 1) + 65;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -16,16 +21,14 @@ var Enemy = function(x, y, reset) {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    //Sets the speed or 'movement' of the
+    // Sets the speed or 'movement' of the enemy object, this is multiplied by
+    // the dt parameter for uniformity across computers.
     this.x += this.speed*dt;
     //Checks each enemy in the array and if they are at the end of the
     //Game board they are reset to the start and their speed is reset.
     allEnemies.forEach(function(enemy) {
       if(enemy.x >= 510) {
-        enemy.x = resetX;
+        enemy.x = enemy.resetX;
         this.speed = Math.floor((Math.random() * 100) + 1) + 65;
       }else {
 
@@ -39,7 +42,6 @@ Enemy.prototype.update = function(dt) {
         player.x + player.width > enemy.x &&
         player.y < enemy.y + enemy.height &&
         player.height + player.y > enemy.y) {
-          console.log('collision')
           playerInstances.playerDied();
         }
     });
@@ -50,16 +52,17 @@ Enemy.prototype.render = function(x, y) {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+// Player class object. This is built using an x and y coordinate and includes
+// a height and width, sprite and score variable.
 class Player {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    // As with enemy objects the height and width is used for collision calculations.
     this.height = 80;
-    this.width = 70;
+    this.width = 65;
     this.sprite = 'images/char-boy.png';
+    // Score is updated when gems are collected.
     this.score = 0;
   }
   update(dt) {
@@ -72,32 +75,37 @@ class Player {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   }
 
+  // handleInput uses a switch to check for each input of the allowedKeys
+  // this will first check to make sure the player isn't at the edge of the
+  // game board, if true it will prevent movement in that direction.
   handleInput(key) {
-    switch (key) {
-      case 'left':
+    if(playerHit === false){
+      switch (key) {
+        case 'left':
         if (player.x === 0) {
         }else {
           player.x -= 100;
         }
         break;
-      case 'right':
+        case 'right':
         if (player.x === 400) {
         }else {
           player.x += 100;
         }
         break;
-      case 'up':
+        case 'up':
         if (player.y === -50) {
         }else {
           player.y -= 90;
         }
         break;
-      case 'down':
+        case 'down':
         if (player.y >= 400) {
         }else {
           player.y += 90;
         }
         break;
+      }
     }
   }
 };
@@ -116,18 +124,18 @@ class Gem {
   }
 
   update() {
+    //Collision between player and gems
+    //Collision using Axis-Aligned Bounding Box off developer.mozilla.org
+    // '2D_collision_detection'
     allGems.forEach(function(gem) {
       if (player.x < gem.x + 10 &&
         player.x + player.width > gem.x &&
         player.y < gem.y + 10 &&
         player.height + player.y > gem.y) {
           console.log('bling!')
-          gemToKill = gem.id;
-          let gemName = gem.id;
           let gemIndex = allGems.indexOf(gem);
-          if(gemToKill == gemName) {
-            allGems.splice(gemIndex, 1);
-          }
+          // Once a gem is collected it is spliced from the gem array.
+          allGems.splice(gemIndex, 1);
           playerInstances.gemCollected(gem.score);
         }
     });
@@ -141,16 +149,21 @@ class Gem {
 //Instances for player such as death (collision) and winning (crossing the path)
 var playerInstances = {
   playerDied: function() {
-    player.x = 200;
-    player.y = 400;
+    playerHit = true;
+    alert('Oops you were squashed by a bug!, how ironic');
+    setTimeout(function(){
+      playerHit = false;
+    }, 350);
+    reset();
   },
 
   playerWon: function() {
     won = true;
     setTimeout(function(){
       if(won === true) {
-        won = false;
         alert('You won!, you scored ' + player.score + ' points!');
+        reset();
+        won = false;
       }
     }, 350)
     setTimeout(function(){
@@ -163,9 +176,8 @@ var playerInstances = {
   }
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
+// A player object is created using the Player constructor, then a number of enemies
+// and finally gems. The enemies and gems are added to their own arrays.
 const player = new Player(200, 400);
 const enemyOne = new Enemy(100, 60, -100);
 const enemyTwo = new Enemy(100, 140, -100);
@@ -182,10 +194,26 @@ const allEnemies = [enemyOne, enemyTwo, enemyThree, enemyFour, enemyFive, enemyS
 const gemOne = new Gem('blue', 400, 317, 80, 'blueOne');
 const gemTwo = new Gem('green', 200, 17, 160, 'greenOne');
 const gemThree = new Gem('orange', 100, 117, 240, 'orangeOne');
-const allGems = [gemOne, gemTwo, gemThree];
+let allGems = [gemOne, gemTwo, gemThree];
+// gemArray is declared here for the resetGems function.
+let gemArray = allGems;
 
-let gemToKill = '';
+// Functions used for resetting the game for a win or a death.
+function resetGems() {
+  gemArray.splice(0, gemArray.length);
+  allGems = [gemOne, gemTwo, gemThree];
+  console.log(allGems);
+};
+
+function resetEnemies() {
+  allEnemies.forEach(function(enemy){
+      enemy.x = enemy.startPos;
+  });
+};
+
+// The won boolean will cause the game to reset.
 let won = false;
+let playerHit = false;
 
 
 // This listens for key presses and sends the keys to your

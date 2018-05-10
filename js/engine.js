@@ -97,7 +97,6 @@ var Engine = (function(global) {
             enemy.update(dt);
       });
       player.update();
-      reset();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -167,6 +166,18 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
+      // This is called when either the player is hit by an enemy
+      // or if the player reaches the end.
+      if(playerHit === true || won === true) {
+        // resetGems and resetEnemies will reset the position of the enemies
+        // and rebuild the gem array
+        resetGems();
+        resetEnemies();
+        // Player score and position are reset also.
+        player.score = 0;
+        player.x = 200;
+        player.y = 400;
+      };
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -193,4 +204,5 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    window.reset = reset;
 })(this);
