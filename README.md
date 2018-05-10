@@ -1,6 +1,57 @@
-frontend-nanodegree-arcade-game
-===============================
+# Classic Arcade Game - Udacity FEND Project
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+```
+A classic arcade game clone similar to frogger. The player must get from the start position to the end avoiding all enemy
+bugs. If the player hits the bugs the game is over and you must start again. If you reach the end you will be told your 
+final score.
+```
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+![Character](images/char-boy.png)
+
+## Prerequisites
+
+```
+All you need to play the game is a browser. Google Chrome is recommended as it
+was used primarily in testing.
+
+If you wish to play offline it is suggested that you download/clone all files and run it from your own browser.
+```
+
+## Built with
+
+```
+HTML, CSS, Javascript and JQuery.
+```
+
+## Contributing
+
+```
+This is a project for learning purposes. No contributions are required.
+```
+
+## Bugs
+
+```
+If you happen to find any bugs while playing the memory match game, please leave
+a comment on the main INDEX.html file
+```
+
+## Authors
+
+* **David Garrood** - Full Project
+
+## License
+
+```
+This project is not licensed.
+```
+
+## Acknowledgments
+
+```
+In building this project google was heavily used. Forums such as stackoverflow,
+websites such as w3schools and documentation such as Mozilla MDN were all used
+to assist and reference.
+
+In particular the collision script was taken from developer.mozilla.org.
+```
