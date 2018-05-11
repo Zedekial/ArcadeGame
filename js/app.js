@@ -1,6 +1,7 @@
+'use strict';
+
 // Enemies our player must avoid
 // When a new enemy is created it is passed an x, y and reset number
-
 var Enemy = function(x, y, reset) {
     // Declares variables which are used within the enemy object
     this.x = x;
@@ -26,26 +27,19 @@ Enemy.prototype.update = function(dt) {
     this.x += this.speed*dt;
     //Checks each enemy in the array and if they are at the end of the
     //Game board they are reset to the start and their speed is reset.
-    allEnemies.forEach(function(enemy) {
-      if(enemy.x >= 510) {
-        enemy.x = enemy.resetX;
-        this.speed = Math.floor((Math.random() * 100) + 1) + 65;
-      }else {
+    if(this.x >= 510) {
+      this.x = this.resetX;
+      this.speed = Math.floor((Math.random() * 100) + 1) + 65;
+    }else {
+    }
+  };
 
-      }
-    });
+Enemy.prototype.collisionCheck = function() {
     //Collision between player and enemy bugs
     //Collision using Axis-Aligned Bounding Box off developer.mozilla.org
     // '2D_collision_detection'
-    allEnemies.forEach(function(enemy) {
-      if (player.x < enemy.x + enemy.width &&
-        player.x + player.width > enemy.x &&
-        player.y < enemy.y + enemy.height &&
-        player.height + player.y > enemy.y) {
-          playerInstances.playerDied();
-        }
-    });
-};
+
+  };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function(x, y) {
@@ -66,9 +60,17 @@ class Player {
     this.score = 0;
   }
   update(dt) {
-    if (won === false && player.y <= 50/player.height) {
+    if (won === false && this.y <= 50/this.height) {
       playerInstances.playerWon();
     }
+    allEnemies.forEach(function(enemy){
+      if (player.x < enemy.x + enemy.width &&
+        player.x + player.width > enemy.x &&
+        player.y < enemy.y + enemy.height &&
+        player.height + player.y > enemy.y) {
+          playerInstances.playerDied();
+        }
+    });
   }
 
   render() {
@@ -82,27 +84,27 @@ class Player {
     if(playerHit === false){
       switch (key) {
         case 'left':
-        if (player.x === 0) {
+        if (this.x === 0) {
         }else {
-          player.x -= 100;
+          this.x -= 100;
         }
         break;
         case 'right':
-        if (player.x === 400) {
+        if (this.x === 400) {
         }else {
-          player.x += 100;
+          this.x += 100;
         }
         break;
         case 'up':
-        if (player.y === -50) {
+        if (this.y === -50) {
         }else {
-          player.y -= 90;
+          this.y -= 90;
         }
         break;
         case 'down':
-        if (player.y >= 400) {
+        if (this.y >= 400) {
         }else {
-          player.y += 90;
+          this.y += 90;
         }
         break;
       }
@@ -125,20 +127,16 @@ class Gem {
 
   update() {
     //Collision between player and gems
-    //Collision using Axis-Aligned Bounding Box off developer.mozilla.org
+    //Collision using Axis-Aligned Bounding Box off
     // '2D_collision_detection'
-    allGems.forEach(function(gem) {
-      if (player.x < gem.x + 10 &&
-        player.x + player.width > gem.x &&
-        player.y < gem.y + 10 &&
-        player.height + player.y > gem.y) {
-          console.log('bling!')
-          let gemIndex = allGems.indexOf(gem);
-          // Once a gem is collected it is spliced from the gem array.
-          allGems.splice(gemIndex, 1);
-          playerInstances.gemCollected(gem.score);
-        }
-    });
+    if (player.x < this.x + 10 &&
+      player.x + player.width > this.x &&
+      player.y < this.y + 10 &&
+      player.height + player.y > this.y) {
+        console.log('bling!')
+        // Once a gem is collected it is spliced from the gem array.
+        playerInstances.gemCollected(this.score, this);
+      };
   }
 
   render() {
@@ -171,7 +169,9 @@ var playerInstances = {
       player.y = 400;
     }, 200)
   },
-  gemCollected: function(score) {
+  gemCollected: function(score, gem) {
+    let gemIndex = allGems.indexOf(gem);
+    allGems.splice(gemIndex, 1);
     player.score += score;
   }
 };

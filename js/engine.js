@@ -23,6 +23,7 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
+        gameStart = false;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -89,7 +90,7 @@ var Engine = (function(global) {
      * the data/properties related to the object. Do your drawing in your
      * render methods.
      */
-    function updateEntities(dt) {
+    function updateEntities(dt, playerChar) {
       allGems.forEach(function(gem) {
         gem.update();
       });
@@ -205,4 +206,5 @@ var Engine = (function(global) {
      */
     global.ctx = ctx;
     window.reset = reset;
+    window.gameStart = true;
 })(this);
