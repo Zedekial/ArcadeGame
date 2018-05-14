@@ -30,15 +30,7 @@ Enemy.prototype.update = function(dt) {
     if(this.x >= 510) {
       this.x = this.resetX;
       this.speed = Math.floor((Math.random() * 100) + 1) + 65;
-    }else {
     }
-  };
-
-Enemy.prototype.collisionCheck = function() {
-    //Collision between player and enemy bugs
-    //Collision using Axis-Aligned Bounding Box off developer.mozilla.org
-    // '2D_collision_detection'
-
   };
 
 // Draw the enemy on the screen, required method for game
@@ -60,15 +52,60 @@ class Player {
     this.score = 0;
   }
   update(dt) {
+    const thisPlayer = this;
     if (won === false && this.y <= 50/this.height) {
-      playerInstances.playerWon();
+      won = true;
+      setTimeout(function(){
+        if(won === true) {
+          alert('You won!, you scored ' + thisPlayer.score + ' points!');
+          //Reset is a global function which points to line 169 in engine.js
+          //Reset refreshes the game state by resetting gems and enemies
+          reset();
+          won = false;
+        }
+      }, 350);
+      setTimeout(function(){
+        this.x = 200;
+        this.y = 400;
+      }, 200);
     }
-    allEnemies.forEach(function(enemy){
-      if (player.x < enemy.x + enemy.width &&
-        player.x + player.width > enemy.x &&
-        player.y < enemy.y + enemy.height &&
-        player.height + player.y > enemy.y) {
-          playerInstances.playerDied();
+    allEnemies.forEach(function(enemy) {
+      //Collision between player and enemy bugs
+      //Collision using Axis-Aligned Bounding Box off developer.mozilla.org
+      // '2D_collision_detection'
+      if(playerHit === false) {
+        if (thisPlayer.x < enemy.x + enemy.width &&
+          thisPlayer.x + thisPlayer.width > enemy.x &&
+          thisPlayer.y < enemy.y + enemy.height &&
+          thisPlayer.height + thisPlayer.y > enemy.y) {
+            playerHit = true;
+            if(playerHit === true) {
+              setTimeout(function() {
+                alert('Oops you were squashed by a bug!, how ironic');
+                //Reset is a global function which points to line 169 in engine.js
+                //Reset refreshes the game state by resetting gems and enemies
+                reset();
+              }, 190);
+              setTimeout(function() {
+                playerHit = false;
+              }, 200);
+            };
+          }
+        };
+    });
+    //Collision between player and gems
+    //Collision using Axis-Aligned Bounding Box off
+    // '2D_collision_detection'
+    allGems.forEach(function(gem) {
+      if (thisPlayer.x < gem.x + 10 &&
+        thisPlayer.x + gem.width > gem.x &&
+        thisPlayer.y < gem.y + 10 &&
+        thisPlayer.height + thisPlayer.y > gem.y) {
+          // Once a gem is collected it is spliced from the gem array.
+          let gemIndex = allGems.indexOf(gem);
+          let gemScore = gem.score;
+          allGems.splice(gemIndex, 1);
+          thisPlayer.score += gemScore;
         }
     });
   }
@@ -84,29 +121,29 @@ class Player {
     if(playerHit === false){
       switch (key) {
         case 'left':
-        if (this.x === 0) {
-        }else {
-          this.x -= 100;
-        }
-        break;
+          if (this.x === 0) {
+          }else {
+            this.x -= 100;
+          }
+          break;
         case 'right':
-        if (this.x === 400) {
-        }else {
-          this.x += 100;
-        }
-        break;
+          if (this.x === 400) {
+          }else {
+            this.x += 100;
+          }
+          break;
         case 'up':
-        if (this.y === -50) {
-        }else {
-          this.y -= 90;
-        }
-        break;
+          if (this.y === -50) {
+          }else {
+            this.y -= 90;
+          }
+          break;
         case 'down':
-        if (this.y >= 400) {
-        }else {
-          this.y += 90;
-        }
-        break;
+          if (this.y >= 400) {
+          }else {
+            this.y += 90;
+          }
+          break;
       }
     }
   }
@@ -125,56 +162,10 @@ class Gem {
     this.sprite = 'images/half-gem-' + this.color +'.png';
   }
 
-  update() {
-    //Collision between player and gems
-    //Collision using Axis-Aligned Bounding Box off
-    // '2D_collision_detection'
-    if (player.x < this.x + 10 &&
-      player.x + player.width > this.x &&
-      player.y < this.y + 10 &&
-      player.height + player.y > this.y) {
-        console.log('bling!')
-        // Once a gem is collected it is spliced from the gem array.
-        playerInstances.gemCollected(this.score, this);
-      };
-  }
-
   render() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   }
 }
-
-//Instances for player such as death (collision) and winning (crossing the path)
-var playerInstances = {
-  playerDied: function() {
-    playerHit = true;
-    alert('Oops you were squashed by a bug!, how ironic');
-    setTimeout(function(){
-      playerHit = false;
-    }, 350);
-    reset();
-  },
-
-  playerWon: function() {
-    won = true;
-    setTimeout(function(){
-      if(won === true) {
-        alert('You won!, you scored ' + player.score + ' points!');
-        reset();
-        won = false;
-      }
-    }, 350)
-    setTimeout(function(){
-      player.x = 200;
-      player.y = 400;
-    }, 200)
-  },
-  gemCollected: function(score, gem) {
-    let gemIndex = allGems.indexOf(gem);
-    allGems.splice(gemIndex, 1);
-    player.score += score;
-  }
-};
 
 // A player object is created using the Player constructor, then a number of enemies
 // and finally gems. The enemies and gems are added to their own arrays.
@@ -202,19 +193,17 @@ let gemArray = allGems;
 function resetGems() {
   gemArray.splice(0, gemArray.length);
   allGems = [gemOne, gemTwo, gemThree];
-  console.log(allGems);
-};
+}
 
 function resetEnemies() {
   allEnemies.forEach(function(enemy){
       enemy.x = enemy.startPos;
   });
-};
+}
 
-// The won boolean will cause the game to reset.
+// These booleans are used in various checks.
 let won = false;
 let playerHit = false;
-
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

@@ -90,10 +90,7 @@ var Engine = (function(global) {
      * the data/properties related to the object. Do your drawing in your
      * render methods.
      */
-    function updateEntities(dt, playerChar) {
-      allGems.forEach(function(gem) {
-        gem.update();
-      });
+    function updateEntities(dt) {
       allEnemies.forEach(function(enemy) {
             enemy.update(dt);
       });
@@ -153,12 +150,15 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
-         allGems.forEach(function(gem) {
-           gem.render();
-         });
+         //The render order is to make objects show in order on the screen.
+       allGems.forEach(function(gem) {
+         gem.render();
+       });
+
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
+
         player.render();
     }
 
